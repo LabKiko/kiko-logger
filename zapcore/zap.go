@@ -10,20 +10,25 @@ package zapcore
 
 import (
 	"context"
+	"io"
 	"log"
 
 	kLogger "github.com/LabKiko.kiko-logger"
 	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 )
 
 type kZLogger struct {
-	opt    Option
-	logger *zap.Logger
+	opt           Option
+	logger        *zap.Logger
+	_rollingFiles []io.Writer
+	atomicLevel   zap.AtomicLevel
 }
 
-func NewKZLogger(zapCore zapcore.Core, zapOption zap.Option) kLogger.Logger {
-	return &kZLogger{logger: zap.New(zapCore, zapOption)}
+func NewKZLogger(option ...kLogger.Option) kLogger.Logger {
+	zLog := &kZLogger{atomicLevel: zap.NewAtomicLevelAt(zap.InfoLevel)}
+	zLog.logger.WithOptions()
+
+	return zLog
 }
 
 func (k kZLogger) Options() kLogger.Option {
