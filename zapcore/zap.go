@@ -10,7 +10,6 @@ package zapcore
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	kLogger "github.com/LabKiko.kiko-logger"
@@ -18,122 +17,131 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-type KZLogger struct {
+type kZLogger struct {
 	opt    Option
 	logger *zap.Logger
-	// stdLog *log.Logger
 }
 
-func NewZapCoreLogger(zapCore zapcore.Core, zapOption zap.Option) *KZLogger {
-	// stdLog := log.New(logger.Writer(), "", 0)
-	return &KZLogger{logger: zap.New(zapCore, zapOption)}
+func NewKZLogger(zapCore zapcore.Core, zapOption zap.Option) kLogger.Logger {
+	return &kZLogger{logger: zap.New(zapCore, zapOption)}
 }
 
-func (kz *KZLogger) WithContext(ctx context.Context) kLogger.Logger {
-	return kz.logger.WithFields(map[string]interface{}{})
-}
-func (kz *KZLogger) Options() Option {
-	// Implement your logic here
-	return nil
+func (k kZLogger) Options() kLogger.Option {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) SetLevel(lv Level) {
-	// Implement your logic here
+func (k kZLogger) SetLevel(lv kLogger.Level) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) WithContext(ctx context.Context) kLogger.Logger {
-	// Implement your logic here
-	return nil
+func (k kZLogger) WithContext(ctx context.Context) kLogger.Logger {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) WithFields(fields map[string]interface{}) *kLogger.Logger {
-	// Implement your logic here
-	return kz.logger.
+func (k kZLogger) WithFields(fields map[string]interface{}) kLogger.Logger {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) WithCallDepth(callDepth int) *kLogger.Logger {
-	// Implement your logic here
-	return nil
+func (k kZLogger) WithCallDepth(callDepth int) kLogger.Logger {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) WithError(err error) *kLogger.Logger {
-	// Implement your logic here
-	return nil
+func (k kZLogger) WithError(err error) kLogger.Logger {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Debug(args ...interface{}) *kLogger.Logger {
-	l.logger.Debug(fmt.Sprint(args...))
+func (k kZLogger) Debug(args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Info(args ...interface{}) *kLogger.Logger {
-	l.logger.Info(fmt.Sprint(args...))
+func (k kZLogger) Info(args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Warn(args ...interface{}) *kLogger.Logger {
-	l.logger.Warn(fmt.Sprint(args...))
+func (k kZLogger) Warn(args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Error(args ...interface{}) *kLogger.Logger {
-	l.logger.Error(fmt.Sprint(args...))
+func (k kZLogger) Error(args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Fatal(args ...interface{}) *kLogger.Logger {
-	l.logger.Fatal(fmt.Sprint(args...))
+func (k kZLogger) Fatal(args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Debugf(template string, args ...interface{}) *kLogger.Logger {
-	l.logger.Debug(fmt.Sprintf(template, args...))
+func (k kZLogger) Debugf(template string, args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Infof(template string, args ...interface{}) *kLogger.Logger {
-	l.logger.Info(fmt.Sprintf(template, args...))
+func (k kZLogger) Infof(template string, args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Warnf(template string, args ...interface{}) *kLogger.Logger {
-	l.logger.Warn(fmt.Sprintf(template, args...))
+func (k kZLogger) Warnf(template string, args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Errorf(template string, args ...interface{}) *kLogger.Logger {
-	l.logger.Error(fmt.Sprintf(template, args...))
+func (k kZLogger) Errorf(template string, args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Fatalf(template string, args ...interface{}) *kLogger.Logger {
-	l.logger.Fatal(fmt.Sprintf(template, args...))
+func (k kZLogger) Fatalf(template string, args ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Debugw(msg string, keysAndValues ...interface{}) *kLogger.Logger {
-	l.logger.Debugw(msg, keysAndValues...)
+func (k kZLogger) Debugw(msg string, keysAndValues ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Infow(msg string, keysAndValues ...interface{}) *kLogger.Logger {
-	l.logger.Infow(msg, keysAndValues...)
+func (k kZLogger) Infow(msg string, keysAndValues ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Warnw(msg string, keysAndValues ...interface{}) *kLogger.Logger {
-	l.logger.Warnw(msg, keysAndValues...)
+func (k kZLogger) Warnw(msg string, keysAndValues ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Errorw(msg string, keysAndValues ...interface{}) *kLogger.Logger {
-	l.logger.Errorw(msg, keysAndValues...)
+func (k kZLogger) Errorw(msg string, keysAndValues ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Fatalw(msg string, keysAndValues ...interface{}) *kLogger.Logger {
-	return kz.logger.Fatalw(msg, keysAndValues...)
+func (k kZLogger) Fatalw(msg string, keysAndValues ...interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Log(level Level, template string, fmtArgs []interface{}, context []interface{}) {
-	// Implement your logic here
+func (k kZLogger) Log(level kLogger.Level, template string, fmtArgs []interface{}, context []interface{}) {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) StdLog() *log.Logger {
-	// TODO
-	return nil
+func (k kZLogger) StdLog() *log.Logger {
+	// TODO implement me
+	panic("implement me")
 }
 
-func (kz *KZLogger) Sync() error {
-	err := kz.logger.Sync()
-	if err != nil {
-		return err
-	}
-	return nil
+func (k kZLogger) Sync() error {
+	// TODO implement me
+	panic("implement me")
 }

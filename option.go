@@ -7,3 +7,6 @@
  */
 
 package kiko_logger
+
+type Option struct {
+}
