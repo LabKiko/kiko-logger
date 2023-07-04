@@ -62,29 +62,6 @@ type Logger interface {
 	// Fatalf uses fmt.Sprintf to log a templated message, then calls os.Exit.
 	Fatalf(template string, args ...interface{})
 
-	// Debugw logs a message with some additional context. The variadic key-value
-	// pairs are treated as they are in With.
-	//
-	// When debug-level logging is disabled, this is much faster than
-	//  s.With(keysAndValues).Debug(msg)
-	Debugw(msg string, keysAndValues ...interface{})
-
-	// Infow logs a message with some additional context. The variadic key-value
-	// pairs are treated as they are in With.
-	Infow(msg string, keysAndValues ...interface{})
-
-	// Warnw logs a message with some additional context. The variadic key-value
-	// pairs are treated as they are in With.
-	Warnw(msg string, keysAndValues ...interface{})
-
-	// Errorw logs a message with some additional context. The variadic key-value
-	// pairs are treated as they are in With.
-	Errorw(msg string, keysAndValues ...interface{})
-
-	// Fatalw logs a message with some additional context, then calls os.Exit. The
-	// variadic key-value pairs are treated as they are in With.
-	Fatalw(msg string, keysAndValues ...interface{})
-
 	// Log writes a log entry
 	Log(level Level, template string, fmtArgs []interface{}, context []interface{})
 
@@ -92,4 +69,12 @@ type Logger interface {
 
 	// Sync logger sync
 	Sync() error
+	// AddHooks Hooks registers functions which will be called each time the Logger writes
+	// out an Entry. Repeated use of Hooks is additive.
+	//
+	// Hooks are useful for simple side effects, like capturing metrics for the
+	// number of emitted logs. More complex side effects, including anything that
+	// requires access to the Entry's structured fields, should be implemented as
+	// a zapcore.Core instead. See zapcore.RegisterHooks for details.
+	AddHooks() Option
 }

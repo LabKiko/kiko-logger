@@ -8,4 +8,4 @@
 
 package kiko_logger
 
-type Level int32
+type Level int8

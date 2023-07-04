@@ -98,31 +98,6 @@ func (K KLLogger) Fatalf(template string, args ...interface{}) {
 	panic("implement me")
 }
 
-func (K KLLogger) Debugw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (K KLLogger) Infow(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (K KLLogger) Warnw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (K KLLogger) Errorw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (K KLLogger) Fatalw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
 func (K KLLogger) Log(level kLogger.Level, template string, fmtArgs []interface{}, context []interface{}) {
 	// TODO implement me
 	panic("implement me")
@@ -138,6 +113,6 @@ func (K KLLogger) Sync() error {
 	panic("implement me")
 }
 
-func NewKLLogger() kLogger.Logger {
+func NewLogger() kLogger.Logger {
 	return &KLLogger{}
 }
