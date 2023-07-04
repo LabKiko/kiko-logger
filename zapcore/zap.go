@@ -24,129 +24,115 @@ type kZLogger struct {
 	atomicLevel   zap.AtomicLevel
 }
 
-func NewKZLogger(option ...kLogger.Option) kLogger.Logger {
+func NewLogger(option ...kLogger.Option) *kZLogger {
 	zLog := &kZLogger{atomicLevel: zap.NewAtomicLevelAt(zap.InfoLevel)}
 	zLog.logger.WithOptions()
 
 	return zLog
 }
 
-func (k kZLogger) Options() kLogger.Option {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Options() kLogger.Option {
+	return kLogger.Option{}
 }
 
-func (k kZLogger) SetLevel(lv kLogger.Level) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) SetLevel(lv kLogger.Level) {
+	l.opt.level = Level(lv)
+	l.atomicLevel.SetLevel(l.opt.level.unmarshalZapLevel())
 }
 
-func (k kZLogger) WithContext(ctx context.Context) kLogger.Logger {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) WithContext(ctx context.Context) kLogger.Logger {
+	spanId := kLogger.ExtractSpanId(ctx)
+	traceId := kLogger.ExtractTraceId(ctx)
+
+	fields := make(map[string]interface{})
+	if len(spanId) > 0 {
+		fields[kLogger.SpanKey] = spanId
+	}
+	if len(traceId) > 0 {
+		fields[kLogger.TraceId] = spanId
+	}
+
+	return &kZLogger{opt: l.opt, logger: l.logger.With(CopyFields(fields)...).WithOptions(zap.AddCallerSkip(0))}
 }
 
-func (k kZLogger) WithFields(fields map[string]interface{}) kLogger.Logger {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) WithFields(fields map[string]interface{}) kLogger.Logger {
+	return &kZLogger{
+		opt:    l.opt,
+		logger: l.logger.With(CopyFields(fields)...).WithOptions(zap.AddCallerSkip(0)),
+	}
 }
 
-func (k kZLogger) WithCallDepth(callDepth int) kLogger.Logger {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) WithCallDepth(callDepth int) kLogger.Logger {
+	return &kZLogger{
+		opt:    l.opt,
+		logger: l.logger.WithOptions(zap.AddCallerSkip(callDepth)),
+	}
 }
 
-func (k kZLogger) WithError(err error) kLogger.Logger {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) WithError(err error) kLogger.Logger {
+
 }
 
-func (k kZLogger) Debug(args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Debug(args ...interface{}) {
+
 }
 
-func (k kZLogger) Info(args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Info(args ...interface{}) {
+
 }
 
-func (k kZLogger) Warn(args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Warn(args ...interface{}) {
+
 }
 
-func (k kZLogger) Error(args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Error(args ...interface{}) {
+
 }
 
-func (k kZLogger) Fatal(args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Fatal(args ...interface{}) {
+
 }
 
-func (k kZLogger) Debugf(template string, args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Debugf(template string, args ...interface{}) {
+
 }
 
-func (k kZLogger) Infof(template string, args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Infof(template string, args ...interface{}) {
+
 }
 
-func (k kZLogger) Warnf(template string, args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Warnf(template string, args ...interface{}) {
+
 }
 
-func (k kZLogger) Errorf(template string, args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Errorf(template string, args ...interface{}) {
+
 }
 
-func (k kZLogger) Fatalf(template string, args ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Fatalf(template string, args ...interface{}) {
+
 }
 
-func (k kZLogger) Debugw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Log(level kLogger.Level, template string, fmtArgs []interface{}, context []interface{}) {
+
 }
 
-func (k kZLogger) Infow(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) AddHooks() kLogger.Option {
+
 }
 
-func (k kZLogger) Warnw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) StdLog() *log.Logger {
+
 }
 
-func (k kZLogger) Errorw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
+func (l kZLogger) Sync() error {
+	return l.logger.Sync()
 }
 
-func (k kZLogger) Fatalw(msg string, keysAndValues ...interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (k kZLogger) Log(level kLogger.Level, template string, fmtArgs []interface{}, context []interface{}) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (k kZLogger) StdLog() *log.Logger {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (k kZLogger) Sync() error {
-	// TODO implement me
-	panic("implement me")
+func CopyFields(fields map[string]interface{}) []zap.Field {
+	dst := make([]zap.Field, 0, len(fields))
+	for l, v := range fields {
+		dst = append(dst, zap.Any(l, v))
+	}
+	return dst
 }
