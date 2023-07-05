@@ -8,7 +8,9 @@ require (
 )
 
 require (
+	github.com/sirupsen/logrus v1.9.3 // indirect
 	go.opentelemetry.io/otel v1.16.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 )

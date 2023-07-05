@@ -18,7 +18,6 @@ import (
 	"path"
 
 	kLogger "github.com/LabKiko.kiko-logger"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -295,35 +294,17 @@ func CopyFields(fields map[string]interface{}) []zap.Field {
 	return dst
 }
 
-func (l *KzLog) extractSpanId(ctx context.Context) string {
-	spanCtx := trace.SpanContextFromContext(ctx)
-	if spanCtx.HasSpanID() {
-		return spanCtx.SpanID().String()
-	}
-
-	return ""
-}
-
-func (l *KzLog) extractTraceId(ctx context.Context) string {
-	spanCtx := trace.SpanContextFromContext(ctx)
-	if spanCtx.HasTraceID() {
-		return spanCtx.TraceID().String()
-	}
-
-	return ""
-}
-
 // WithContext with context
 func (l *KzLog) WithContext(ctx context.Context) kLogger.Logger {
-	spanId := l.extractSpanId(ctx)
-	traceId := l.extractTraceId(ctx)
+	spanId := kLogger.ExtractSpanId(ctx)
+	traceId := kLogger.ExtractTraceId(ctx)
 
 	fields := map[string]interface{}{}
 	if len(spanId) > 0 {
-		fields[spanKey] = spanId
+		fields[kLogger.SpanKey] = spanId
 	}
 	if len(traceId) > 0 {
-		fields[traceKey] = traceId
+		fields[kLogger.TraceId] = traceId
 	}
 
 	logger := &KzLog{

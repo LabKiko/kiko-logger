@@ -13,8 +13,6 @@ import (
 )
 
 const (
-	spanKey          = "span_id"
-	traceKey         = "trace_id"
 	callerSkipOffset = 2
 )
 
