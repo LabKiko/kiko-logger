@@ -63,7 +63,7 @@ type Logger interface {
 	Fatalf(template string, args ...interface{})
 
 	// Log writes a log entry
-	Log(level Level, template string, fmtArgs []interface{}, context []interface{})
+	// Log(level Level, template string, fmtArgs []interface{}, context []interface{})
 
 	StdLog() *log.Logger
 
@@ -76,5 +76,5 @@ type Logger interface {
 	// number of emitted logs. More complex side effects, including anything that
 	// requires access to the Entry's structured fields, should be implemented as
 	// a zapcore.Core instead. See zapcore.RegisterHooks for details.
-	AddHooks() Option
+	AddHooks(hooks ...Hook)
 }

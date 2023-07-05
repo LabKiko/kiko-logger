@@ -7,3 +7,9 @@
  */
 
 package kiko_logger
+
+type Hook func() *HookStruct
+
+type HookStruct struct {
+	LoggerName string
+}
