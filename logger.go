@@ -15,7 +15,7 @@ import (
 
 type Logger interface {
 	// Options The Logger options
-	Options() Option
+	// Options() Option
 
 	// SetLevel set logger level
 	SetLevel(lv Level)
@@ -76,5 +76,5 @@ type Logger interface {
 	// number of emitted logs. More complex side effects, including anything that
 	// requires access to the Entry's structured fields, should be implemented as
 	// a zapcore.Core instead. See zapcore.RegisterHooks for details.
-	AddHooks(hooks ...Hook)
+	// AddHooks(hooks ...Hook)
 }

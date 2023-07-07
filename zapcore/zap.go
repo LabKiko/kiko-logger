@@ -9,7 +9,6 @@
 package zapcore
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -46,8 +45,8 @@ func (l *KzLog) SetLevel(lv kLogger.Level) {
 	l.atomicLevel.SetLevel(l.opt.level.unmarshalZapLevel())
 }
 
-func (l *KzLog) Options() kLogger.Option {
-	return kLogger.Option{}
+func (l *KzLog) Options() *Option {
+	return &l.opt
 }
 
 func New(opts ...Options) *KzLog {
@@ -115,7 +114,7 @@ func (l *KzLog) setUp() error {
 
 	zapLog := zap.New(zapcore.NewTee(core...)).WithOptions(zap.AddCaller(), zap.AddCallerSkip(l.opt.callerSkip))
 	if l.opt.fields != nil {
-		keyVals := CopyFields(l.opt.fields)
+		keyVals := copyFields(l.opt.fields)
 		zapLog = zapLog.With(keyVals...)
 	}
 	if l.opt.namespace != "" {
@@ -286,7 +285,7 @@ func (l *KzLog) clone() *KzLog {
 	return &_copy
 }
 
-func CopyFields(fields map[string]interface{}) []zap.Field {
+func copyFields(fields map[string]interface{}) []zap.Field {
 	dst := make([]zap.Field, 0, len(fields))
 	for k, v := range fields {
 		dst = append(dst, zap.Any(k, v))
@@ -310,7 +309,7 @@ func (l *KzLog) WithContext(ctx context.Context) kLogger.Logger {
 	logger := &KzLog{
 		opt:         l.opt,
 		atomicLevel: l.atomicLevel,
-		base:        l.base.With(CopyFields(fields)...).WithOptions(zap.AddCallerSkip(0)),
+		base:        l.base.With(copyFields(fields)...).WithOptions(zap.AddCallerSkip(0)),
 	}
 	return logger
 }
@@ -320,7 +319,7 @@ func (l *KzLog) WithFields(fields map[string]interface{}) kLogger.Logger {
 	logger := &KzLog{
 		opt:         l.opt,
 		atomicLevel: l.atomicLevel,
-		base:        l.base.With(CopyFields(fields)...).WithOptions(zap.AddCallerSkip(0)),
+		base:        l.base.With(copyFields(fields)...).WithOptions(zap.AddCallerSkip(0)),
 	}
 	return logger
 }
@@ -340,17 +339,12 @@ func (l *KzLog) WithError(err error) kLogger.Logger {
 	logger := &KzLog{
 		opt:         l.opt,
 		atomicLevel: l.atomicLevel,
-		base: l.base.With(CopyFields(map[string]interface{}{
+		base: l.base.With(copyFields(map[string]interface{}{
 			"error": err,
 		})...).WithOptions(zap.AddCallerSkip(0)),
 	}
 	return logger
 }
-
-// Options logger option value.
-// func (l *KzLog) Options() Option {
-// 	return l.opt
-// }
 
 // getMessage format with Sprint, Sprintf, or neither.
 func getMessage(template string, fmtArgs []interface{}) string {
@@ -494,25 +488,13 @@ func (l *KzLog) Errorf(template string, args ...interface{}) {
 }
 
 func (l *KzLog) StdLog() *std.Logger {
-	stdLogger := std.New(logWriter{
-		logFunc: func() func(msg string, args ...interface{}) {
+	stdLogger := std.New(kLogger.LogWriter{
+		LogFunc: func() func(msg string, args ...interface{}) {
 			logger := &KzLog{base: l.base.WithOptions(zap.AddCallerSkip(3))}
 			return logger.Infof
 		},
 	}, "", 0)
 	return stdLogger
-}
-
-type logWriter struct {
-	logFunc func() func(msg string, fields ...interface{})
-}
-
-func (l logWriter) Write(p []byte) (int, error) {
-	p = bytes.TrimSpace(p)
-	if l.logFunc != nil {
-		l.logFunc()(string(p))
-	}
-	return len(p), nil
 }
 
 func (l *KzLog) Sync() error {
@@ -526,11 +508,10 @@ func (l *KzLog) Sync() error {
 			r.Close()
 		}
 	}
-
 	return nil
 }
-func (l *KzLog) AddHooks(hooks ...kLogger.Hook) {
-
+func (l *KzLog) AddHooks(hooks ...func(entry zapcore.Entry) error) {
+	l.base.WithOptions(zap.Hooks(hooks...))
 }
 
 // Fatalf uses fmt.Sprintf to log a templated message, then calls os.Exit.
