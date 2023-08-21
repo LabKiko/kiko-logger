@@ -9,7 +9,7 @@
 package logrus
 
 import (
-	kLogger "github.com/LabKiko.kiko-logger"
+	kLogger "github.com/LabKiko/kiko-logger/logger"
 	"github.com/sirupsen/logrus"
 )
 

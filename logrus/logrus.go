@@ -13,22 +13,25 @@ import (
 	"io"
 	"log"
 
-	kLogger "github.com/LabKiko.kiko-logger"
+	"github.com/LabKiko/kiko-logger/logger"
+	utils "github.com/LabKiko/kiko-logger/utils"
 	"github.com/sirupsen/logrus"
 )
 
 type KLLogger struct {
-	base *logrus.Logger
-	opt  *Option
+	base     *logrus.Logger
+	logEntry *logrus.Entry
+	opt      *Option
 }
 
-func NewLogger(opts ...Options) kLogger.Logger {
+func NewLogger(opts ...Options) kiko_logger.Logger {
 	logger := &KLLogger{
 		base: logrus.New(),
 	}
 
 	logger.withOption(opts...)
 
+	logger.logEntry = logrus.NewEntry(logger.base)
 	return logger
 }
 
@@ -47,6 +50,7 @@ func (l *KLLogger) withOption(opts ...Options) {
 	for _, hook := range opt.hooks {
 		l.base.AddHook(hook)
 	}
+
 	l.opt = &opt
 
 }
@@ -54,11 +58,11 @@ func (l *KLLogger) Option() *Option {
 	return l.opt
 }
 
-func (l *KLLogger) SetLevel(lv kLogger.Level) {
+func (l *KLLogger) SetLevel(lv kiko_logger.Level) {
 	l.base.SetLevel(convertLevel(lv))
 }
 
-func convertLevel(level kLogger.Level) logrus.Level {
+func convertLevel(level kiko_logger.Level) logrus.Level {
 	defaultLevel := logrus.InfoLevel
 	if lLevel, ok := LevelMap[level]; ok {
 		defaultLevel = lLevel
@@ -67,57 +71,58 @@ func convertLevel(level kLogger.Level) logrus.Level {
 	return defaultLevel
 }
 
-func (l *KLLogger) WithContext(ctx context.Context) kLogger.Logger {
-	spanId := kLogger.ExtractSpanId(ctx)
-	traceId := kLogger.ExtractTraceId(ctx)
+func (l *KLLogger) WithContext(ctx context.Context) kiko_logger.Logger {
+	spanId := utils.ExtractSpanId(ctx)
+	traceId := utils.ExtractTraceId(ctx)
 
 	fields := logrus.Fields{}
 	if len(spanId) > 0 {
-		fields[kLogger.SpanKey] = spanId
+		fields[utils.SpanKey] = spanId
 	}
 	if len(traceId) > 0 {
-		fields[kLogger.TraceId] = traceId
+		fields[utils.TraceId] = traceId
 	}
 
 	return &KLLogger{
-		base: l.base.WithFields(fields).WithContext(ctx).Logger,
+		logEntry: l.logEntry.WithFields(fields),
 	}
 
 }
 
-func (l *KLLogger) WithFields(fields map[string]interface{}) kLogger.Logger {
+func (l *KLLogger) WithFields(fields map[string]interface{}) kiko_logger.Logger {
 	return &KLLogger{
-		base: l.base.WithFields(fields).Logger,
+		logEntry: l.logEntry.WithFields(fields),
 	}
 }
 
-func (l *KLLogger) WithCallDepth(callDepth int) kLogger.Logger {
+func (l *KLLogger) WithCallDepth(callDepth int) kiko_logger.Logger {
 	l.base.SetReportCaller(true)
 	return &KLLogger{
-		base: l.base,
+		base:     l.base,
+		logEntry: l.logEntry,
 	}
 }
 
-func (l *KLLogger) WithError(err error) kLogger.Logger {
+func (l *KLLogger) WithError(err error) kiko_logger.Logger {
 	return &KLLogger{
-		base: l.base.WithError(err).Logger,
+		logEntry: l.logEntry.WithError(err),
 	}
 }
 
 func (l *KLLogger) Debug(args ...interface{}) {
-	l.base.Debug(args...)
+	l.logEntry.Debug(args...)
 }
 
 func (l *KLLogger) Info(args ...interface{}) {
-	l.base.Info(args...)
+	l.logEntry.Info(args...)
 }
 
 func (l *KLLogger) Warn(args ...interface{}) {
-	l.base.Warn(args...)
+	l.logEntry.Warn(args...)
 }
 
 func (l *KLLogger) Error(args ...interface{}) {
-	l.base.Error(args...)
+	l.logEntry.Error(args...)
 }
 
 func (l *KLLogger) Fatal(args ...interface{}) {
@@ -125,28 +130,28 @@ func (l *KLLogger) Fatal(args ...interface{}) {
 }
 
 func (l *KLLogger) Debugf(template string, args ...interface{}) {
-	l.base.Debugf(template, args...)
+	l.logEntry.Debugf(template, args...)
 }
 
 func (l *KLLogger) Infof(template string, args ...interface{}) {
-	l.base.Infof(template, args...)
+	l.logEntry.Infof(template, args...)
 }
 
 func (l *KLLogger) Warnf(template string, args ...interface{}) {
-	l.base.Warnf(template, args...)
+	l.logEntry.Warnf(template, args...)
 }
 
 func (l *KLLogger) Errorf(template string, args ...interface{}) {
-	l.base.Errorf(template, args...)
+	l.logEntry.Errorf(template, args...)
 }
 
 func (l *KLLogger) Fatalf(template string, args ...interface{}) {
-	l.base.Fatalf(template, args...)
+	l.logEntry.Fatalf(template, args...)
 }
 
 func (l *KLLogger) StdLog() *log.Logger {
 
-	stdLogger := log.New(kLogger.LogWriter{
+	stdLogger := log.New(kiko_logger.LogWriter{
 		LogFunc: func() func(msg string, args ...interface{}) {
 			logger := &KLLogger{base: l.base}
 			return logger.Infof
@@ -154,7 +159,6 @@ func (l *KLLogger) StdLog() *log.Logger {
 	}, "", 0)
 	return stdLogger
 
-	return nil
 }
 
 func (l *KLLogger) Sync() error {

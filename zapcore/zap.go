@@ -16,7 +16,8 @@ import (
 	"os"
 	"path"
 
-	kLogger "github.com/LabKiko.kiko-logger"
+	kLogger "github.com/LabKiko/kiko-logger"
+	"github.com/LabKiko/kiko-logger/logger"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -40,7 +41,7 @@ type KzLog struct {
 	atomicLevel   zap.AtomicLevel
 }
 
-func (l *KzLog) SetLevel(lv kLogger.Level) {
+func (l *KzLog) SetLevel(lv kiko_logger.Level) {
 	l.opt.level = Level(lv)
 	l.atomicLevel.SetLevel(l.opt.level.unmarshalZapLevel())
 }
@@ -294,7 +295,7 @@ func copyFields(fields map[string]interface{}) []zap.Field {
 }
 
 // WithContext with context
-func (l *KzLog) WithContext(ctx context.Context) kLogger.Logger {
+func (l *KzLog) WithContext(ctx context.Context) kiko_logger.Logger {
 	spanId := kLogger.ExtractSpanId(ctx)
 	traceId := kLogger.ExtractTraceId(ctx)
 
@@ -315,7 +316,7 @@ func (l *KzLog) WithContext(ctx context.Context) kLogger.Logger {
 }
 
 // WithFields set fields to always be logged
-func (l *KzLog) WithFields(fields map[string]interface{}) kLogger.Logger {
+func (l *KzLog) WithFields(fields map[string]interface{}) kiko_logger.Logger {
 	logger := &KzLog{
 		opt:         l.opt,
 		atomicLevel: l.atomicLevel,
@@ -325,7 +326,7 @@ func (l *KzLog) WithFields(fields map[string]interface{}) kLogger.Logger {
 }
 
 // WithCallDepth  with logger call depth.
-func (l *KzLog) WithCallDepth(callDepth int) kLogger.Logger {
+func (l *KzLog) WithCallDepth(callDepth int) kiko_logger.Logger {
 	logger := &KzLog{
 		opt:         l.opt,
 		atomicLevel: l.atomicLevel,
@@ -335,7 +336,7 @@ func (l *KzLog) WithCallDepth(callDepth int) kLogger.Logger {
 }
 
 // WithError with logger error
-func (l *KzLog) WithError(err error) kLogger.Logger {
+func (l *KzLog) WithError(err error) kiko_logger.Logger {
 	logger := &KzLog{
 		opt:         l.opt,
 		atomicLevel: l.atomicLevel,
